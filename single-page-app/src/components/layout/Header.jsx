@@ -1,8 +1,20 @@
+import { useEffect } from "react";
 import { useState } from "react"
+import Popup from 'reactjs-popup';
+import 'reactjs-popup/dist/index.css';
 
-export default function Header(props){
-    const [user,setUser] = useState(props.user)
+export default function Header(props) {
+    const [user, setUser] = useState(props.user)
+    const [total,setTotal] = useState(props.listPCart.length)
+    
     console.log(user);
+
+    useEffect(()=>{
+        //setTotal(props.listPCart.length)
+        if(props.listPCart){
+            setTotal(props.listPCart.length)
+        }
+    },[props])
 
     let localUser = JSON.parse(localStorage.getItem("user"));
     console.log(localUser);
@@ -10,8 +22,10 @@ export default function Header(props){
         <div className="header">
             {user && (
                 <div>
-                    <span>name: {user.name}</span>
+                    <input type="text" onChange={(e) => { props.filter(e.target.value) }} />
+                    <span>nameAAA: {user.name}</span>
                     <span>role: {user.role}</span>
+                   
                 </div>
             )}
 
@@ -19,13 +33,16 @@ export default function Header(props){
                 localUser && (
                     (
                         <div>
+                            <input type="text" onChange={(e) => { props.filter(e.target.value) }} />
+
                             <span>name: {localUser.name}</span>
                             <span>role: {localUser.role}</span>
-        
+
                         </div>
                     )
                 )
             }
+             {<strong>Total: {total} - sp</strong>}
         </div>
     )
 }

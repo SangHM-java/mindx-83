@@ -74,7 +74,7 @@
 .product {
   display: flex;
   width: 300px;
-  height: 200px;
+  height: 200;
   flex-direction: column;
   justify-content: center;
 }
@@ -87,7 +87,7 @@
   margin: 10px;
 }
 
-.welcome button {
+.welcome .button1 {
   margin: 20px;
   background-color: chartreuse;
   font-size: 36px;

@@ -1,19 +1,32 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Products from "../DATA.json"
 import Menu from "../menu.json"
 import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
 
 export default function Welcome(props) {
-    const [data, setData] = useState(Products);
+    const [data, setData] = useState(props.Products);
     const [plist, setPList] = useState(data)
     const [name, setName] = useState("")
     const [fTitle, setFTitle] = useState([])
+    const [listPCart, setListPCart] = useState([])
 
     const filter = (name) => {
         let fData = data.filter(p => p.name.indexOf(name) >= 0);
         setPList(fData);
     }
+
+
+    useEffect(() => {
+        let uPList = plist.map(item => {
+            let newItem = {
+                ...item,
+                count: 0
+            }
+            return newItem
+        })
+        setPList(uPList)
+    }, [])
 
     const menuHandler = (title) => {
         let fData = data.filter(p => p.name.indexOf(title) >= 0); // Tim kiem phan tu
@@ -66,15 +79,13 @@ export default function Welcome(props) {
 
     return (
         <>
-            <Popup trigger={<button> Trigger</button>} position="right center">
-                <div>Popup content here !!</div>
-            </Popup>
+
             <div className="welcome" style={{ display: "flex", justifyContent: "space-between", flexDirection: "row" }}>
                 <div style={{ width: "30%", backgroundColor: "Highlight", display: "flex", flexDirection: "column" }}>
                     {Menu.map(m => (
                         <div>
                             <input type="checkbox" onChange={cbMenuHandler} value={m.title} />
-                            <button onClick={() => { menuHandler(m.title) }}>{m.title}</button>
+                            <button className="button1" onClick={() => { menuHandler(m.title) }}>{m.title}</button>
                         </div>
                     ))}
                 </div>
@@ -89,13 +100,46 @@ export default function Welcome(props) {
                     } />
                     <span>Tong so film: {plist.length}</span>
                     <div className="plist" style={{ display: "flex", justifyContent: "flex-start", flexWrap: "wrap" }}>
-                        {plist.map(p => (
-                            <div className="product" style={{ backgroundColor: "Highlight" }}>
-                                <span>name: {p.name}</span>
-                                <img src={p.url} width={200} height={150} />
-                                <span>price: {p.price} $</span>
-                            </div>
-                        ))}
+                        {plist && plist.map((p, idx) => {
+
+                            return (
+                                <div className="product" style={{ backgroundColor: "Highlight", }}>
+                                    <span>name: {p.name}</span>
+                                    <img src={p.url} width={200} height={150} />
+                                    <span>price: {p.price} $</span>
+                                    <div style={{ display: "flex", gap: "10px" }}>
+                                        <button
+                                            onClick={() => {
+                                                let updateLst = plist.map((p, t) => {
+                                                    if (t == idx) {
+                                                        p.count--
+                                                    }
+                                                    return p
+                                                })
+                                                setPList(updateLst)
+                                            }}
+                                        >-</button>
+                                        {p.count}
+                                        <button onClick={() => {
+                                            let updateLst = plist.map((p, t) => {
+                                                if (t == idx) {
+                                                    p.count++
+                                                }
+                                                return p
+
+                                            })
+                                            setPList(updateLst)
+                                        }}>
+                                            +
+                                        </button>
+                                        <button onClick={()=>{
+                                            props.setCarts(p)
+                                        }} >Buy</button>
+                                    </div>
+
+                                </div>
+                            )
+                        })}
                     </div>
                 </div>
             </div>
